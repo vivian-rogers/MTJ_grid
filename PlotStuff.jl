@@ -73,3 +73,13 @@ function fullColorAnimation(p::NamedTuple, Mvals::Matrix{Float64}, name::String=
     #colorarray = IndirectArray(RGB.(Mgrid), [colorant"red", colorant"green", colorant"blue"])
     save(name, HSL.(H,S,L); fps=40)
 end
+
+function plotSpectrum(p::NamedTuple, Mvals::Matrix{Float64}, name::String="spectrum.png", dim::Int=3)
+    Mzgrid = Mvec_to_matrices(p,Mvals,dim)
+    nT = size(Mzgrid)[3]
+    Mzvals = Mzgrid[:,:,nT]
+    eig = eigvals(sign.(Mzvals))
+    fig = plot(heatmap(Mzgrid[:,:,nT],clim=(-1,1), cmap=:coolwarm, title="finaltime"), 
+    scatter(real.(eig), imag.(eig), xlabel="Re(λ)", ylabel="Im(λ)"), size=(900,450))
+    savefig(fig, name)
+end
